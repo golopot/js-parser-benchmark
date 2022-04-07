@@ -1,0 +1,11 @@
+# js-parser-benchmark
+
+```
+espree 52.310424000024796
+acorn 38.8359169960022
+@typescript/eslint-parser 158.37146900594234
+@babel/eslint-parser 131.04013100266457
+@babel/parser 52.57228800654411
+meriyah 31.315091997385025
+seafox 28.70474599301815
+```
