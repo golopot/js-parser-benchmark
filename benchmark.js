@@ -9,6 +9,12 @@ import babelParser from "@babel/parser";
 import * as meriyah from "meriyah";
 import seafox from "seafox";
 import * as acorn from "acorn";
+import typescript from "typescript";
+
+// @ts-ignore
+import mep from "meriyah-eslint-parser";
+
+import { parseSync } from "@swc/core";
 
 /** @type {{name:string, parse: (_: string) => any}[]}} */
 const parsers = [
@@ -30,6 +36,27 @@ const parsers = [
     },
   },
   {
+    name: "espree-se",
+    parse(source) {
+      const ast = espree.parse(source, {
+        range: true,
+        loc: false,
+        tokens: false,
+        comment: false,
+        useJSXTextNode: false,
+        ecmaVersion: 2021,
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      });
+
+      const q = JSON.stringify(ast);
+      const r = JSON.parse(q);
+      return r;
+    },
+  },
+  {
     name: "acorn",
     parse(source) {
       return acorn.parse(source, {
@@ -37,6 +64,18 @@ const parsers = [
         ecmaVersion: 2021,
         sourceType: "module",
       });
+    },
+  },
+  {
+    name: "typescript",
+    parse(source) {
+      return typescript.createSourceFile("filename", source, 7);
+    },
+  },
+  {
+    name: "swc",
+    parse(source) {
+      return parseSync(source);
     },
   },
   {
@@ -86,6 +125,12 @@ const parsers = [
     },
   },
   {
+    name: "meriyah-eslint-parser",
+    parse(source) {
+      return mep.parse(source, {});
+    },
+  },
+  {
     name: "seafox",
     parse(source) {
       return seafox.parse(source, {
@@ -101,7 +146,9 @@ function main() {
 
   for (const parser of parsers) {
     const start = performance.now();
-    parser.parse(source);
+    for (let i = 0; i < 1; i++) {
+      parser.parse(source);
+    }
     const end = performance.now();
     console.log(parser.name, end - start);
   }
